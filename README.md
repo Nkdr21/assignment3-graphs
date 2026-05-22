@@ -227,23 +227,26 @@ Edges:
 
 ### Expected Output (from vertex 0)
 
-//  Graph layout:
-//
-//    0 ──4── 1 ──8── 2
-//    |       |       |
-//   11       2      6
-//    |       |       |
-//    7 ──1── 6 ──2── 5
-//    |               |
-//    8               7
-//    |               |
-//    8 ──2── 3 ──9── 4
-//            \
-//            14
-//             \
-//              5
-//
-//  Classic textbook graph with 9 vertices (0–8)
+```markdown
+> ### 📊 Graph Topology & Layout
+>
+> ```text
+>     0 ───(4)─── 1 ───(8)─── 2
+>     │           │           │
+>   (11)         (2)         (6)
+>     │           │           │
+>     7 ───(1)─── 6 ───(2)─── 5
+>     │                       │
+>    (8)                     (7)
+>     │                       │
+>     8 ───(2)─── 3 ───(9)─── 4
+>                 ╲
+>                (14)
+>                   ╲
+>                    5
+> ```
+> * **Vertices:** 9 nodes (0–8)  
+> * **Edges:** Weighted, undirected
 
 ```
 Dijkstra shortest paths from vertex 0:
