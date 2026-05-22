@@ -265,4 +265,6 @@ Dijkstra shortest paths from vertex 0:
 ### Key Design Decision
 
 The `Graph` class keeps **two separate adjacency lists** — one unweighted (`adjList`) for BFS/DFS and one weighted (`weightedAdjList`) for Dijkstra. This preserves full backward compatibility with the original assignment while cleanly extending the graph for the bonus task. The `Edge` class was also updated to carry a `weight` field, making it usable in weighted graph representations.
-![img.png](img.png)
+<img width="1252" height="171" alt="image" src="https://github.com/user-attachments/assets/a1cd8496-0c52-48d6-904a-3edc7d3e3c8e" />
+<img width="608" height="513" alt="image" src="https://github.com/user-attachments/assets/d5032c7d-c5e3-43b4-984b-5414ca1a9506" />
+
