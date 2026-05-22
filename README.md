@@ -225,12 +225,11 @@ Edges:
   7 -- 8  (weight 7)
 ```
 
-### Expected Output (from vertex 0)
 
 ```markdown
-> ### 📊 Graph Topology & Layout
+> ###  Graph Topology & Layout
 >
-> ```text
+> ```
 >     0 ───(4)─── 1 ───(8)─── 2
 >     │           │           │
 >   (11)         (2)         (6)
@@ -245,10 +244,12 @@ Edges:
 >                   ╲
 >                    5
 > ```
-> * **Vertices:** 9 nodes (0–8)  
-> * **Edges:** Weighted, undirected
+> * Classic textbook graph with 9 vertices (0–8)
+> 
 
 ```
+### Expected Output (from vertex 0) 
+
 Dijkstra shortest paths from vertex 0:
   To vertex 0: distance = 0    |  path = 0
   To vertex 1: distance = 4    |  path = 0 -> 1
