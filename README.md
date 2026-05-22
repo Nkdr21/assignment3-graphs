@@ -29,17 +29,22 @@ The graph is stored using an **adjacency list**: each vertex maps to a list of i
 Represents a single node in the graph. Contains one private field — an integer `id` — along with a constructor, a getter, and a `toString()` method for readable output. Kept intentionally simple, since a vertex only needs to be uniquely identifiable within the graph.
 
 ### `Edge.java`
-Represents a directed connection between two vertices. Stores a `source` vertex (where the edge begins) and a `destination` vertex (where it ends). Provides constructors, getters for both ends, and a `toString()` that prints the edge as `from -> to`.
+Represents a directed connection between two vertices. Stores a `source` vertex (where the edge begins), a `destination` vertex (where it ends), and a `weight` field representing the cost of traversing this edge. Provides constructors, getters for all three fields, and a `toString()` that prints the edge as `from -> to (weight: w)`.
+
+> **Bonus update:** A `weight` field and `getWeight()` getter were added to support weighted graphs for Dijkstra's algorithm.
 
 ### `Graph.java`
-The core data structure of the project. Uses a `HashMap<Integer, List<Integer>>` as its **adjacency list** — each vertex id maps to a list of neighboring vertex ids. This allows O(1) average-time lookup for a vertex's neighbors.
+The core data structure of the project. Uses a `HashMap<Integer, List<Integer>>` as its **adjacency list** — each vertex id maps to a list of neighboring vertex ids. For weighted graph support, a second map `HashMap<Integer, List<int[]>>` stores edges as `[neighborId, weight]` pairs.
 
 Key methods:
 - `addVertex(Vertex v)` — adds a vertex to the graph
-- `addEdge(int from, int to)` — creates an undirected edge between two vertices (adds both directions)
-- `printGraph()` — displays the full adjacency list in the console
+- `addEdge(int from, int to)` — creates an undirected unweighted edge (used by BFS/DFS)
+- `addWeightedEdge(int from, int to, int weight)` — creates an undirected weighted edge (used by Dijkstra)
+- `printGraph()` — displays the full unweighted adjacency list
+- `printWeightedGraph()` — displays the weighted adjacency list with edge weights
 - `bfs(int start)` — executes Breadth-First Search from the given starting vertex
 - `dfs(int start)` — executes Depth-First Search from the given starting vertex
+- `dijkstra(int start)` — executes Dijkstra's algorithm and prints shortest distances and paths
 
 **Adjacency List Representation:**  
 Rather than a 2D matrix (which would require V² space), the adjacency list stores only actual edges. For example, if vertex 0 connects to vertices 1 and 2, the map stores `{0: [1, 2]}`. This makes it both memory-efficient and fast to iterate over neighbors.
@@ -48,7 +53,7 @@ Rather than a 2D matrix (which would require V² space), the adjacency list stor
 Responsible for performance testing. Constructs graphs of sizes 10, 30, and 100 vertices, runs BFS and DFS on each, and measures execution time using `System.nanoTime()`. Prints a comparison of results for each graph size.
 
 ### `Main.java`
-The program entry point. Creates a 10-vertex demo graph, prints its adjacency list, runs both traversals to show their order, then calls `Experiment` to run the full performance comparison across all three graph sizes.
+The program entry point. Creates a 10-vertex demo graph, prints its adjacency list, runs both traversals to show their order, then calls `Experiment` to run the full performance comparison across all three graph sizes. Also contains the Dijkstra bonus demo section.
 
 
 
@@ -152,3 +157,108 @@ The main risk of DFS is **stack overflow** on very large or deeply nested graphs
 Before this assignment, I had a theoretical understanding of graphs from lectures, but building one from scratch in code changed how I think about them. Implementing the adjacency list made it clear why this representation is preferred for sparse graphs — you only store connections that actually exist, which is both faster to iterate and cheaper in memory. Seeing the `HashMap<Integer, List<Integer>>` structure in action made the abstraction concrete.
 
 The most valuable thing I took away from writing BFS and DFS is how one small missing piece — the visited set — can break everything. The first time I ran DFS without tracking visited nodes, the algorithm kept looping through the same vertices indefinitely. Adding the visited check fixed it immediately, and I finally understood its purpose intuitively rather than just knowing it as a rule. I also found it genuinely interesting that BFS and DFS visit the exact same nodes but produce entirely different orderings — a reminder that in graph problems, *how* you traverse often matters as much as *what* you traverse.
+
+
+
+---
+
+## G. Bonus Task — Dijkstra's Shortest Path Algorithm
+
+### Overview
+
+Dijkstra's algorithm finds the **shortest path from one starting vertex to all other vertices** in a weighted graph. Unlike BFS (which counts hops), Dijkstra considers the actual cost of each edge and always finds the path with the minimum total weight.
+
+### What was changed
+
+| File | Change |
+|------|--------|
+| `Edge.java` | Added `weight` field, updated constructor and `toString()` |
+| `Graph.java` | Added `weightedAdjList`, `addWeightedEdge()`, `printWeightedGraph()`, and `dijkstra()` methods |
+| `Main.java` | Added a Dijkstra demo section with a 9-vertex weighted graph |
+
+### How Dijkstra's Algorithm Works
+
+The algorithm maintains two arrays:
+
+- `dist[]` — the shortest known distance from the start to each vertex (initially infinity, except the start which is 0)
+- `visited[]` — whether a vertex has been finalized (its shortest path confirmed)
+
+**Step-by-step:**
+
+1. Set `dist[start] = 0`, all others to infinity.
+2. Repeat until all vertices are visited:
+    - Pick the **unvisited vertex with the smallest distance** (linear search through `dist[]`).
+    - Mark it as visited — its shortest distance is now confirmed.
+    - For each of its neighbors: if going through the current vertex gives a shorter path, update `dist[neighbor]`.
+3. After the loop, `dist[i]` holds the shortest distance from start to every vertex `i`.
+
+**Why it works:** At every step, we finalize the globally closest unvisited vertex. Because edge weights are non-negative, no future path can improve on it — so this greedy choice is always correct.
+
+### Complexity
+
+| | Value |
+|-|-------|
+| Time complexity | O(V²) — due to linear scan for minimum in each of V iterations |
+| Space complexity | O(V) — for the `dist[]`, `visited[]`, and `prev[]` arrays |
+
+A priority queue would reduce this to O((V + E) log V), but this implementation uses simple arrays and loops as specified in the task requirements.
+
+### Demo Graph
+
+The demo in `Main.java` uses a classic 9-vertex weighted graph (vertices 0–8):
+
+```
+Edges:
+  0 -- 1  (weight 4)
+  0 -- 7  (weight 8)
+  1 -- 2  (weight 8)
+  1 -- 7  (weight 11)
+  2 -- 3  (weight 7)
+  2 -- 5  (weight 4)
+  2 -- 8  (weight 2)
+  3 -- 4  (weight 9)
+  3 -- 5  (weight 14)
+  4 -- 5  (weight 10)
+  5 -- 6  (weight 2)
+  6 -- 7  (weight 1)
+  6 -- 8  (weight 6)
+  7 -- 8  (weight 7)
+```
+
+### Expected Output (from vertex 0)
+
+//  Graph layout:
+//
+//    0 ──4── 1 ──8── 2
+//    |       |       |
+//   11       2      6
+//    |       |       |
+//    7 ──1── 6 ──2── 5
+//    |               |
+//    8               7
+//    |               |
+//    8 ──2── 3 ──9── 4
+//            \
+//            14
+//             \
+//              5
+//
+//  Classic textbook graph with 9 vertices (0–8)
+
+```
+Dijkstra shortest paths from vertex 0:
+  To vertex 0: distance = 0    |  path = 0
+  To vertex 1: distance = 4    |  path = 0 -> 1
+  To vertex 2: distance = 12   |  path = 0 -> 1 -> 2
+  To vertex 3: distance = 19   |  path = 0 -> 1 -> 2 -> 3
+  To vertex 4: distance = 21   |  path = 0 -> 7 -> 6 -> 5 -> 4
+  To vertex 5: distance = 11   |  path = 0 -> 7 -> 6 -> 5
+  To vertex 6: distance = 9    |  path = 0 -> 7 -> 6
+  To vertex 7: distance = 8    |  path = 0 -> 7
+  To vertex 8: distance = 14   |  path = 0 -> 1 -> 2 -> 8
+```
+
+### Key Design Decision
+
+The `Graph` class keeps **two separate adjacency lists** — one unweighted (`adjList`) for BFS/DFS and one weighted (`weightedAdjList`) for Dijkstra. This preserves full backward compatibility with the original assignment while cleanly extending the graph for the bonus task. The `Edge` class was also updated to carry a `weight` field, making it usable in weighted graph representations.
+![img.png](img.png)
