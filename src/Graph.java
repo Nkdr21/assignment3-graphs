@@ -122,12 +122,7 @@ public class Graph {
         }
     }
 
-    // -------------------------------------------------------
     // BONUS: Dijkstra's Algorithm — Shortest Path
-    // -------------------------------------------------------
-    // Finds the shortest distance from 'start' to all other vertices.
-    // Uses arrays and simple loops (no priority queue) as allowed.
-    // -------------------------------------------------------
     public void dijkstra(int start) {
         if (!weightedAdjList.containsKey(start)) {
             System.out.println("Start vertex not found.");
@@ -188,7 +183,6 @@ public class Graph {
             }
         }
 
-        // Print results
         System.out.println("Dijkstra shortest paths from vertex " + start + ":");
         for (int i = 0; i < n; i++) {
             int targetId = ids.get(i);
