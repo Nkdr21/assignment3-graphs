@@ -261,11 +261,11 @@ Dijkstra shortest paths from vertex 0:
   To vertex 7: distance = 8    |  path = 0 -> 7
   To vertex 8: distance = 14   |  path = 0 -> 1 -> 2 -> 8
 ```
-
+```
 ### Key Design Decision
 
 The `Graph` class keeps **two separate adjacency lists** — one unweighted (`adjList`) for BFS/DFS and one weighted (`weightedAdjList`) for Dijkstra. This preserves full backward compatibility with the original assignment while cleanly extending the graph for the bonus task. The `Edge` class was also updated to carry a `weight` field, making it usable in weighted graph representations.
-
+```
 ```
 <img width="1367" height="764" alt="image" src="https://github.com/user-attachments/assets/efaa272f-024a-4c04-a198-a6744dfbe436" />
 
